@@ -1,0 +1,17 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+venv/
+.venv/
+# Docker specific ignores
+.dockerignore
+!Dockerfile
+!docker-compose.yml
+# Data directories (as mentioned in Task 1 for data lake)
+data/raw/
+data/processed/
+*.log
+*.session

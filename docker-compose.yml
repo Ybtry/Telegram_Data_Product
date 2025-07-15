@@ -1,0 +1,32 @@
+version: '3.8' # You can remove this line if you want to clear the warning
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+      - "3000:3000"
+    volumes:
+      # Mount only the 'src' directory for live code changes
+      - ./src:/app/src # <--- CHANGED THIS LINE
+      - ./data:/app/data # Keep this for persistent data
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: telegram_data_warehouse
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mySecurePassword123 # <--- Ensure this is your actual password
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+volumes:
+  pg_data:
