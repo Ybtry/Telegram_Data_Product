@@ -10,8 +10,9 @@ services:
       - "3000:3000"
     volumes:
       # Mount only the 'src' directory for live code changes
-      - ./src:/app/src # <--- CHANGED THIS LINE
+      - ./src:/app/src
       - ./data:/app/data # Keep this for persistent data
+      - ./models:/app/models # ADDED: Mount the local models directory to the container
     env_file:
       - .env
     depends_on:

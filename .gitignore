@@ -1,17 +1,41 @@
-.env
+# Python
 __pycache__/
 *.pyc
-.pytest_cache/
-.mypy_cache/
-.ipynb_checkpoints/
+*.pyo
+*.pyd
+.Python
+env/
 venv/
-.venv/
-# Docker specific ignores
+*.env
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Docker
 .dockerignore
-!Dockerfile
+
 !docker-compose.yml
-# Data directories (as mentioned in Task 1 for data lake)
+!Dockerfile
+
+# Data directories
 data/raw/
 data/processed/
-*.log
+data/enriched/
+
+# Database data (Docker volumes)
+pg_data/
+
+# Telethon session files
 *.session
+*.session-journal
+
+# dbt artifacts
+dbt_packages/
+dbt_modules/
+logs/
+target/
+dbt_project.log
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+.vscode/ 

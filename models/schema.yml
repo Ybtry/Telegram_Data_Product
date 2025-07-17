@@ -1,0 +1,127 @@
+version: 2
+
+sources:
+  - name: raw 
+    database: telegram_data_warehouse # Your database name
+    schema: raw 
+
+    tables:
+      - name: telegram_messages # The table name where raw messages are stored
+        description: "Raw messages scraped from Telegram channels."
+        columns:
+          - name: id
+            description: "Primary key of the raw message entry."
+            tests:
+              - unique
+              - not_null
+          - name: message_data
+            description: "Full JSON data of the Telegram message."
+          - name: source_file
+            description: "Original JSON file from which the message was loaded."
+
+models:
+  - name: stg_telegram_messages
+    description: "Staging model for cleaning and restructuring raw Telegram messages."
+    columns:
+      - name: message_id
+        description: "Unique identifier for the Telegram message."
+        tests:
+          - unique
+          - not_null
+      - name: message_timestamp
+        description: "Timestamp when the message was posted."
+        tests:
+          - not_null
+      - name: sender_id
+        description: "ID of the sender of the message."
+      - name: channel_id
+        description: "Telegram ID of the channel the message belongs to."
+        tests:
+          - not_null
+      - name: has_image
+        description: "Boolean indicating if the message contains an image."
+      - name: image_file_path
+        description: "Local path to the image file, if present."
+
+  - name: dim_channels
+    description: "Dimension table containing unique Telegram channel information."
+    columns:
+      - name: channel_sk
+        description: "Surrogate key for the channel dimension."
+        tests:
+          - unique
+          - not_null
+      - name: channel_id
+        description: "Original Telegram channel ID."
+        tests:
+          - unique
+          - not_null
+      - name: channel_name
+        description: "Inferred name of the Telegram channel."
+        tests:
+          - not_null
+      - name: first_seen_at
+        description: "Timestamp of the earliest message seen from this channel."
+      - name: last_seen_at
+        description: "Timestamp of the latest message seen from this channel."
+
+  - name: dim_dates
+    description: "Dimension table for date-based analysis."
+    columns:
+      - name: date_day
+        description: "The date (YYYY-MM-DD)."
+        tests:
+          - unique
+          - not_null
+      - name: year
+        description: "Year of the date."
+      - name: month
+        description: "Month of the date."
+      - name: day
+        description: "Day of the month."
+        tests:
+          - not_null
+      - name: day_of_week
+        description: "Day of the week (0=Sunday, 6=Saturday)."
+      - name: day_name
+        description: "Full name of the day (e.g., 'Monday')."
+      - name: is_weekend
+        description: "Boolean indicating if the day is a weekend."
+
+  - name: fct_messages
+    description: "Fact table containing one row per Telegram message, linked to dimensions."
+    columns:
+      - name: message_id
+        description: "Unique identifier for the Telegram message."
+        tests:
+          - unique
+          - not_null
+      - name: channel_sk
+        description: "Foreign key to the dim_channels table."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_channels')
+              field: channel_sk
+      - name: message_date
+        description: "Date of the message, foreign key to dim_dates."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_dates')
+              field: date_day
+      - name: message_text
+        description: "Content of the Telegram message."
+      - name: has_image
+        description: "Boolean indicating if the message contains an image."
+      - name: image_file_path
+        description: "Local path to the image file, if present, used for YOLO enrichment."
+      - name: message_length
+        description: "Length of the message text."
+      - name: contains_price_keyword
+        description: "Boolean flag if message text contains 'price' or 'birr'."
+        # REMOVED the problematic inline test definition from here
+      - name: contains_drug_keyword
+        description: "Boolean flag if message text contains 'drug' or 'medication'."
+      - name: contains_cosmetic_keyword
+        description: "Boolean flag if message text contains 'cream' or 'cosmetic'."

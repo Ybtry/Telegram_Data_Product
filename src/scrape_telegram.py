@@ -3,13 +3,13 @@ import asyncio
 import json
 from telethon.sync import TelegramClient
 from telethon.tl.functions.channels import GetFullChannelRequest
-from telethon.tl.types import Channel, PeerChannel # Keep PeerChannel import just in case
+from telethon.tl.types import Channel, PeerChannel 
 
 # --- Configuration from .env ---
 API_ID = os.getenv('TELEGRAM_API_ID')
 API_HASH = os.getenv('TELEGRAM_API_HASH')
 PHONE_NUMBER = os.getenv('TELEGRAM_PHONE_NUMBER')
-CHANNEL_USERNAME = os.getenv('TELEGRAM_CHANNEL_USERNAME') # This holds the -100... ID or username
+CHANNEL_USERNAME = os.getenv('TELEGRAM_CHANNEL_USERNAME') 
 MESSAGE_LIMIT = int(os.getenv('TELEGRAM_MESSAGE_LIMIT', 50))
 
 # --- File Paths ---
@@ -37,13 +37,12 @@ async def scrape_channel_messages():
         return
 
     try:
-        # Before trying to get the entity, let's try to load dialogs
+       
         # This helps Telethon build its internal cache of entities the user has access to
         print("Loading user dialogs to build entity cache...")
         await client.get_dialogs() # This helps populate the entity cache
 
-        # Determine if the input is a numerical ID or a username string
-        # Use a simple string check for the -100 prefix for clarity in logging
+       
         is_numerical_id = False
         try:
             int_channel_id = int(CHANNEL_USERNAME)

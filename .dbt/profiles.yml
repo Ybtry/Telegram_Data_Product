@@ -1,0 +1,12 @@
+telegram_data_product: # This must match the 'profile' name in dbt_project.yml
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: db # This is the Docker service name
+      port: 5432
+      user: postgres
+      password: mySecurePassword123 # Use the exact password from your .env
+      dbname: telegram_data_warehouse
+      schema: public
+      threads: 1

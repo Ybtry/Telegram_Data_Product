@@ -1,0 +1,22 @@
+name: 'telegram_data_product'
+version: '1.0.0'
+config-version: 2
+
+profile: 'telegram_data_product'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+  - "dbt_modules"
+
+models:
+  telegram_data_product:
+    +materialized: table
